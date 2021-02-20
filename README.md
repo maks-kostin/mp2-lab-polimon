@@ -1,1 +1,1 @@
-# mp2-lab-polimon
+# mp2-lab-polinom
