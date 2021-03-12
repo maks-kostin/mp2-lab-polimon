@@ -3,6 +3,58 @@
 
 using namespace std;
 
+struct TMonom 
+{
+	int x, y, z;
+	double coeff;
+
+	TMonom() { x = 0; y = 0; z = 0; coeff = 1; }
+
+	bool operator>(const TMonom& m)
+	{
+		if (x > m.x)
+			return true;
+		else
+			if ((x == m.x) && (y > m.y))
+				return true;
+			else
+				if ((x == m.x) && (y == m.y) && (z > m.z))
+					return true;
+		return false;
+	}
+
+	bool operator<(const TMonom& m)
+	{
+		if (x < m.x)
+			return true;
+		else
+			if ((x == m.x) && (y < m.y))
+				return true;
+			else
+				if ((x == m.x) && (y == m.y) && (z < m.z))
+					return true;
+		return false;
+	}
+
+	bool operator==(const TMonom& m)
+	{
+		if ((x == m.x) && (y == m.y) && (z == m.z))
+			return true;
+		return false;
+	}
+
+	bool operator!=(const TMonom& m)
+	{
+		return !(operator==(m));
+	}
+
+	friend ostream& operator<<(ostream& out, const TMonom& m)
+	{
+		out << m.coeff << "*x^ " << m.x << "*y^" << m.y << "*z^" << m.z << " ";
+		return out;
+	}
+};
+
 template <class T>
 struct TLink
 {
@@ -17,7 +69,7 @@ protected:
 	TLink<T>* pFirst, * pLast, * pCurr, * pPrev, * pStop;
 	int size, pos;
 public:
-	TList() { pStop = NULL; pFirst = pLast = pCurr = pPrev = pStop; size = 0; }
+	TList(){ pStop = NULL; pFirst = pLast = pCurr = pPrev = pStop; size = 0; }
 	~TList()
 	{
 		while (pFirst != NULL)
@@ -48,19 +100,6 @@ public:
 		pFirst = tmp;
 	}
 
-	void InsLast(T elem)
-	{
-		TLink<T>* pCurr = pFirst;
-		while (pCurr->pNext != pStop)
-		{
-			pCurr = pCurr->pNext;
-		}
-		TLink<T>* tmp = new TLink<T>;
-		tmp->val = elem;
-		tmp->pNext = NULL;
-		pCurr->pNext = tmp;
-	}
-
 	void InsK(T elem, int k)
 	{
 		TLink<T>* pCurr = pFirst;
@@ -74,7 +113,7 @@ public:
 		tmp->pNext = _tmp;
 	}
 
-	void InsElem(T elem)
+	void InsLast(T elem)
 	{
 		if (pFirst != NULL)
 		{
@@ -95,6 +134,15 @@ public:
 		}
 	}
 
+	void InsCurr(T elem)
+	{
+		TLink<T>* tmp = new TLink<T>;
+		TLink<T>* _tmp = pCurr->pNext;
+		pCurr->pNext = tmp;
+		tmp->pNext = _tmp;
+		tmp->val = elem;
+	}
+
 	friend ostream& operator<<(ostream & out, const TList<T> & l)
 	{
 		TLink<T>* tmp = l.pFirst;
@@ -107,9 +155,13 @@ public:
 		return out;
 	}
 
+	void DelFirst()
+	{
+		TLink<T>* t = pFirst;
+		pFirst = pFirst->pNext;
+		delete t;
+	}
 
-
-	void DelFirst();
 	void DelCurr()
 	{
 		if (pCurr == pStop)
@@ -126,6 +178,156 @@ public:
 			size--;
 		}
 	}
+
+	T GetCurr()
+	{
+		return pCurr->val;
+	}
+
+	void SetCurr(T elem)
+	{
+		pCurr->val = elem;
+	}
+
+	void Reset()
+	{
+		pPrev = NULL;
+		pCurr = pFirst;
+	}
+
+	void GoNext()
+	{
+		pPrev = pCurr;
+		pCurr = pCurr->pNext;
+	}
+
+	bool IsEnd()
+	{
+		if (pCurr == pStop)
+			return true;
+		return false;
+	}
 };
 
+template <class T>
+class THeadList : public TList<T>
+{
+protected:
+	using TList<T>::pFirst;
+	TLink<T>* pHead;
+public:
+	THeadList() : TList<T>::TList()
+	{
+		TLink<T>* t = new TLink<T>;
+		pHead = t;
+		this->pStop = pHead; //?this->?
+		pHead->pNext = pHead;
+	}
 
+	~THeadList()
+	{
+		while (pFirst != NULL)
+		{
+			TLink<T>* tmp = pFirst;
+			pFirst = pFirst->pNext;
+			delete tmp;
+		}
+		delete pHead;
+	}
+
+	void InsFirst(T elem)
+	{
+		TList::InsFirst(elem);
+		pHead->pNext = this->pFirst;
+	}
+
+	void DelFirst()
+	{
+		TList<T>::DelFirst();
+		pHead->pNext = this->pFirst;
+	}
+};
+
+class TPolinom : public THeadList<TMonom>
+{
+public:
+	TPolinom()
+	{
+		TMonom tmp;
+		tmp.z = -1;
+		pHead->val = tmp;
+	}
+
+	void InsMonom(TMonom m)
+	{
+		for (Reset(); !IsEnd(); GoNext())
+		{
+			if (m > pCurr->val)
+			{
+				InsCurr(m);
+				break;
+			}
+			else
+				if (m == pCurr->val)
+				{
+					double sum = m.coeff + pCurr->val.coeff;
+						if (sum == 0)
+						{
+							DelCurr();
+						}
+						else
+						{
+							pCurr->val.coeff = sum;
+						}
+						break;
+				}
+			if (pCurr == pStop)
+				InsLast(m);
+		}
+	}
+
+	void operator+=(TPolinom& q)
+	{
+		Reset();
+		q.Reset();
+		while (!q.IsEnd())
+		{
+			if (pCurr->val < q.pCurr->val)
+			{
+				InsCurr(q.pCurr->val);
+				q.GoNext();
+			}
+			else
+			{
+				if (pCurr->val > q.pCurr->val)
+					GoNext();
+				else
+				{
+					double tmp = pCurr->val.coeff + q.pCurr->val.coeff;
+					if (tmp)
+					{
+						pCurr->val.coeff = tmp;
+						GoNext();
+						q.GoNext();
+					}
+					else
+					{
+						DelCurr();
+						q.GoNext();
+					}
+				}
+			}
+		}
+	}
+
+	TPolinom& operator=(TPolinom& q)
+	{
+		if (this == &q)
+			return *this;
+		while (pFirst != pStop)
+			DelFirst();
+		for (q.Reset(); !q.IsEnd(); q.GoNext())
+			InsLast(q.GetCurr());
+		return *this;
+	}
+};

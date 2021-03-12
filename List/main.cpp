@@ -5,12 +5,12 @@ using namespace std;
 
 void main()
 {
-	TList<int> li;
-	for (int i = 0; i < 51; i++)
+	TPolinom p;
+	TMonom a;
+	for (int i = 0; i < 3; i++)
 	{
-		li.InsElem(2 * i);
-		//cout << 2 * i;
+		a.coeff = a.x = a.y = a.z = i + 1;
+		p.InsMonom(a);
 	}
-	//—формировать и вывести на экран список четных чисел от 0 до 100
-	cout << li << endl;
+	cout << p;
 }
