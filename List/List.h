@@ -69,7 +69,12 @@ protected:
 	TLink<T>* pFirst, * pLast, * pCurr, * pPrev, * pStop;
 	int size, pos;
 public:
-	TList(){ pStop = NULL; pFirst = pLast = pCurr = pPrev = pStop; size = 0; }
+	TList(){
+		pStop = NULL;
+		pFirst = pLast = pCurr = pPrev = pStop;
+		size = pos = 0;
+	}
+
 	~TList()
 	{
 		while (pFirst != NULL)
@@ -136,18 +141,27 @@ public:
 
 	void InsCurr(T elem)
 	{
-		TLink<T>* tmp = new TLink<T>;
-		TLink<T>* _tmp = pCurr->pNext;
-		pCurr->pNext = tmp;
-		tmp->pNext = _tmp;
-		tmp->val = elem;
+		if (pCurr == pStop)
+			InsLast(elem);
+		else
+			if (pCurr == pFirst)
+				InsFirst(elem);
+			else
+			{
+				TLink<T>* t = new TLink<T>;
+				t->val = elem;
+				t->pNext = pCurr;
+				pPrev->pNext = t;
+				pPrev = t;
+				size++;
+			}
 	}
 
 	friend ostream& operator<<(ostream & out, const TList<T> & l)
 	{
 		TLink<T>* tmp = l.pFirst;
 		tmp = tmp->pNext;
-		while (tmp != NULL)
+		while (tmp != pStop)
 		{
 			out << tmp->val << " ";
 			tmp = tmp->pNext;
@@ -191,7 +205,6 @@ public:
 
 	void Reset()
 	{
-		pPrev = NULL;
 		pCurr = pFirst;
 	}
 
@@ -213,14 +226,20 @@ template <class T>
 class THeadList : public TList<T>
 {
 protected:
-	using TList<T>::pFirst;
+	//using TList<T>::pFirst;
 	TLink<T>* pHead;
 public:
-	THeadList() : TList<T>::TList()
+	THeadList() : TList()
 	{
+		/*
 		TLink<T>* t = new TLink<T>;
 		pHead = t;
-		this->pStop = pHead; //?this->?
+		pStop = pHead;
+		pHead->pNext = pHead;
+		*/
+		pHead = new TLink<T>;
+		pStop = pHead;
+		pFirst = pLast = pCurr = pPrev = pStop;
 		pHead->pNext = pHead;
 	}
 
@@ -234,17 +253,17 @@ public:
 		}
 		delete pHead;
 	}
-
+	
 	void InsFirst(T elem)
 	{
 		TList::InsFirst(elem);
-		pHead->pNext = this->pFirst;
+		pHead->pNext = pFirst;
 	}
 
 	void DelFirst()
 	{
 		TList<T>::DelFirst();
-		pHead->pNext = this->pFirst;
+		pHead->pNext = pFirst;
 	}
 };
 
@@ -253,9 +272,15 @@ class TPolinom : public THeadList<TMonom>
 public:
 	TPolinom()
 	{
+		pHead->val.x = 0;
+		pHead->val.y = 0;
+		pHead->val.z = -1;
+		pHead->val.coeff = 0;
+		/*
 		TMonom tmp;
 		tmp.z = -1;
 		pHead->val = tmp;
+		*/
 	}
 
 	void InsMonom(TMonom m)
