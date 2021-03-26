@@ -99,7 +99,10 @@ TEST(TPolinom, can_ins_monom)
 
 TEST(TPolinom, can_add_polinom)
 {
-	ASSERT_ANY_THROW();
+	TMonom a(1, 1, 1, 1);
+	TPolinom p;
+	p.InsMonom(a);
+	ASSERT_NO_THROW(p += p;);
 }
 
 

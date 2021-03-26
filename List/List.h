@@ -9,7 +9,7 @@ struct TMonom
 	double coeff;
 
 	TMonom() { x = 0; y = 0; z = 0; coeff = 1; }
-
+	TMonom(int tcoeff, int tx, int ty, int tz) { coeff = tcoeff; x = tx; y = ty; z = tz; }
 	bool operator>(const TMonom& m)
 	{
 		if (x > m.x)
@@ -48,10 +48,27 @@ struct TMonom
 		return !(operator==(m));
 	}
 
+	void operator*=(TMonom& q)
+	{
+		coeff *= q.coeff;
+		x += q.x;
+		y += q.y;
+		z += q.z;
+	}
+
 	friend ostream& operator<<(ostream& out, const TMonom& m)
 	{
-		out << m.coeff << "*x^ " << m.x << "*y^" << m.y << "*z^" << m.z << " ";
+		out << m.coeff << "*x^" << m.x << "*y^" << m.y << "*z^" << m.z << " ";
 		return out;
+	}
+
+	friend istream& operator>>(std::istream& in, TMonom& m)
+	{
+		in >> m.coeff;
+		in >> m.x;
+		in >> m.y;
+		in >> m.z;
+		return in;
 	}
 };
 
@@ -77,7 +94,7 @@ public:
 
 	~TList()
 	{
-		while (pFirst != NULL)
+		while (pFirst != pStop)
 		{
 			TLink<T>* tmp = pFirst;
 			pFirst = pFirst->pNext;
@@ -120,22 +137,16 @@ public:
 
 	void InsLast(T elem)
 	{
-		if (pFirst != NULL)
-		{
-			TLink<T>* pCurr = pFirst;
-			while (pCurr->pNext != NULL)
-				pCurr = pCurr->pNext;
-			TLink<T> * tmp = new TLink<T>;
-			tmp->val = elem;
-			tmp->pNext = NULL;
-			pCurr->pNext = tmp;
-		}
-		else
-		{
+		if (size) {
 			TLink<T>* tmp = new TLink<T>;
 			tmp->val = elem;
-			tmp->pNext = pFirst;
-			pFirst = tmp;
+			tmp->pNext = pStop;
+			pLast->pNext = tmp;
+			pLast = tmp;
+			size++;
+		}
+		else {
+			InsFirst(elem);
 		}
 	}
 
@@ -161,7 +172,7 @@ public:
 	{
 		TLink<T>* tmp = l.pFirst;
 		tmp = tmp->pNext;
-		while (tmp != pStop)
+		while (tmp != l.pStop)
 		{
 			out << tmp->val << " ";
 			tmp = tmp->pNext;
@@ -220,6 +231,7 @@ public:
 			return true;
 		return false;
 	}
+
 };
 
 template <class T>
@@ -245,7 +257,7 @@ public:
 
 	~THeadList()
 	{
-		while (pFirst != NULL)
+		while (pFirst != pStop)
 		{
 			TLink<T>* tmp = pFirst;
 			pFirst = pFirst->pNext;
@@ -272,15 +284,10 @@ class TPolinom : public THeadList<TMonom>
 public:
 	TPolinom()
 	{
-		pHead->val.x = 0;
-		pHead->val.y = 0;
-		pHead->val.z = -1;
-		pHead->val.coeff = 0;
-		/*
 		TMonom tmp;
 		tmp.z = -1;
 		pHead->val = tmp;
-		*/
+		pFirst = pLast = pCurr = pPrev = pStop;
 	}
 
 	void InsMonom(TMonom m)
@@ -306,9 +313,9 @@ public:
 						}
 						break;
 				}
-			if (pCurr == pStop)
-				InsLast(m);
 		}
+		if (pCurr == pStop)
+			InsLast(m);
 	}
 
 	void operator+=(TPolinom& q)
@@ -345,6 +352,19 @@ public:
 		}
 	}
 
+	void operator*=(TPolinom& q)
+	{
+		q.Reset();
+		while (!q.IsEnd())
+		{
+			for (Reset(); !IsEnd(); GoNext())
+			{
+				pCurr->val *= q.pCurr->val;
+			}
+			q.GoNext();
+		}
+	}
+
 	TPolinom& operator=(TPolinom& q)
 	{
 		if (this == &q)
@@ -354,5 +374,21 @@ public:
 		for (q.Reset(); !q.IsEnd(); q.GoNext())
 			InsLast(q.GetCurr());
 		return *this;
+	}
+
+	/*friend ostream& operator<<(ostream& out, const TPolinom& q)
+	{
+		for (q.Reset(); !q.IsEnd(); q.GoNext())
+			out << q.pCurr->val;
+		return out;
+
+	}*/
+	friend std::ostream& operator << (std::ostream& out, TPolinom& p)
+	{
+		for (p.Reset(); !p.IsEnd(); p.GoNext())
+		{
+			out << p.pCurr->val << ' ';
+		}
+		return out;
 	}
 };
