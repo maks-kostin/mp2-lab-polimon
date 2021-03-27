@@ -7,12 +7,13 @@ void main()
 {
 	int exit = 0;
 	TPolinom p;
-	TMonom a;
+	TMonom a, b(1, 2, 2, 1);
 	for (int i = 0; i < 3; i++)
 	{
 		a.coeff = a.x = a.y = a.z = i + 1;
 		p.InsMonom(a);
 	}
+	p.InsMonom(b);
 	cout << p << endl;
 	p += p;
 	cout << p << endl;

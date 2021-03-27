@@ -318,38 +318,34 @@ public:
 			InsLast(m);
 	}
 
-	void operator+=(TPolinom& q)
+	TPolinom& operator+=(TPolinom& p)
 	{
 		Reset();
-		q.Reset();
-		while (!q.IsEnd())
+		TLink<TMonom>* curr = p.pFirst;
+		while (curr != p.pStop)
 		{
-			if (pCurr->val < q.pCurr->val)
+			if (pCurr->val < curr->val)
 			{
-				InsCurr(q.pCurr->val);
-				q.GoNext();
+				InsCurr(curr->val);
+				curr = curr->pNext;
 			}
 			else
 			{
-				if (pCurr->val > q.pCurr->val)
-					GoNext();
-				else
+				if (pCurr->val == curr->val)
 				{
-					double tmp = pCurr->val.coeff + q.pCurr->val.coeff;
+					double tmp = pCurr->val.coeff + curr->val.coeff;
+					pCurr->val.coeff = tmp;
 					if (tmp)
-					{
-						pCurr->val.coeff = tmp;
 						GoNext();
-						q.GoNext();
-					}
 					else
-					{
 						DelCurr();
-						q.GoNext();
-					}
+					curr = curr->pNext;
 				}
+				else
+					GoNext();
 			}
 		}
+		return *this;
 	}
 
 	void operator*=(TPolinom& q)
