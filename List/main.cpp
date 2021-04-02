@@ -14,9 +14,29 @@ void main()
 		p.InsMonom(a);
 	}
 	p.InsMonom(b);
-	cout << p << endl;
-	p += p;
-	cout << p << endl;
+	//cout << p << endl;
+	//p += p;
+	//cout << p << endl;
+
+	TPolinom p1, p2;
+	a.coeff = a.x = a.y = a.z = 1;
+	p1.InsMonom(a);
+	a.coeff = a.x = a.y = a.z = 3;
+	p1.InsMonom(a);
+	a.coeff = a.x = a.y = a.z = 4;
+	p1.InsMonom(a);
+	a.coeff = a.x = a.y = a.z = 2;
+	p2.InsMonom(a);
+	a.coeff = 3;
+	 a.x = a.y = a.z = 3;
+	p2.InsMonom(a);
+	a.coeff = -4;
+	a.x = a.y = a.z = 4;
+	p2.InsMonom(a);
+	cout << p1 << endl;
+	cout << p2 << endl;
+	p1 += p2;
+	cout << p1 << endl;
 
 	while (true)
 	{
