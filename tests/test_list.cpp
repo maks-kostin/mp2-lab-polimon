@@ -2,6 +2,29 @@
 
 #include "gtest.h"
 
+TEST(TMonom, can_create_monom)
+{
+	ASSERT_NO_THROW(TMonom m);
+}
+
+TEST(TMonom, can_compare_the_monoms_more)
+{
+	TMonom m1, m2;
+	ASSERT_NO_THROW(m1 > m2);
+}
+
+TEST(TMonom, can_compare_the_monoms_less)
+{
+	TMonom m1, m2;
+	ASSERT_NO_THROW(m1 < m2);
+}
+
+TEST(Monom, can_compare_the_monoms_equal)
+{
+	TMonom m1, m2;
+	ASSERT_NO_THROW(m1 == m2);
+}
+
 TEST(TList, can_create_list)
 {
 	ASSERT_NO_THROW(TList<int> l);
@@ -20,14 +43,6 @@ TEST(TList, can_ins_last)
 	ASSERT_NO_THROW(li.InsLast(2));
 }
 
-TEST(TList, can_ins_k)
-{
-	TList<int> li;
-	li.InsFirst(1);
-	li.InsLast(2);
-	li.InsLast(4);
-	ASSERT_NO_THROW(li.InsK(3, 3));
-}
 
 TEST(TList, can_del_first)
 {

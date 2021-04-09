@@ -7,16 +7,7 @@ void main()
 {
 	int exit = 0;
 	TPolinom p;
-	TMonom a, b(1, 2, 2, 1);
-	for (int i = 0; i < 3; i++)
-	{
-		a.coeff = a.x = a.y = a.z = i + 1;
-		p.InsMonom(a);
-	}
-	p.InsMonom(b);
-	//cout << p << endl;
-	//p += p;
-	//cout << p << endl;
+	TMonom a;
 
 	TPolinom p1, p2;
 	a.coeff = a.x = a.y = a.z = 1;
@@ -36,13 +27,13 @@ void main()
 	cout << p1 << endl;
 	cout << p2 << endl;
 	p1 += p2;
-	cout << p1 << endl;
+	cout << p1 << endl << endl;
 
 	while (true)
 	{
 		cout << "Print 1 to add one polinom to another" << endl;
-		cout << "Print 2 to multiply one polinom by another" << endl;
-		cout << "Print 3 to stop" << endl;
+		//cout << "Print 2 to multiply one polinom by another" << endl;
+		cout << "Print 0 to stop" << endl;
 		cin >> exit;
 
 		if (exit == 1)
@@ -70,7 +61,7 @@ void main()
 			cout << p << endl;
 		}
 
-		if (exit == 2)
+		/*if (exit == 2)
 		{
 			TPolinom p, q;
 			TMonom tmp;
@@ -93,16 +84,16 @@ void main()
 			}
 			if (size1 > size2)
 			{
-				p *= q;
+				p = p * q;
 				cout << p << endl;
 			}	
 			else
 			{
-				q *= p;
+				q = q * p;
 				cout << q << endl;
 			}
-		}
-		if (exit == 3)
+		}*/
+		if (exit == 0)
 		{
 			break;
 		}
