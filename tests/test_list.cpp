@@ -162,7 +162,28 @@ TEST(TPolinom, polinom_can_become_bigger)
 	p2.InsMonom(a);
 	p1 += p2;
 	EXPECT_EQ(4, p1.GetSize());
+}
 
+TEST(TPolinom, polinom_can_become_lesser)
+{
+	TMonom a;
+	TPolinom p1, p2;
+	a.coeff = a.x = a.y = a.z = 1;
+	p1.InsMonom(a);
+	a.coeff = a.x = a.y = a.z = 3;
+	p1.InsMonom(a);
+	a.coeff = a.x = a.y = a.z = 4;
+	p1.InsMonom(a);
+	a.coeff = a.x = a.y = a.z = 2;
+	p2.InsMonom(a);
+	a.coeff = -3;
+	a.x = a.y = a.z = 3;
+	p2.InsMonom(a);
+	a.coeff = -4;
+	a.x = a.y = a.z = 4;
+	p2.InsMonom(a);
+	p1 += p2;
+	EXPECT_EQ(2, p1.GetSize());
 }
 
 
