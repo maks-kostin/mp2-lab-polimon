@@ -120,6 +120,51 @@ TEST(TPolinom, can_add_polinom)
 	ASSERT_NO_THROW(p += p;);
 }
 
+TEST(TPolinom, null_coeff_deletes)
+{
+	TMonom a;
+	TPolinom p1, p2;
+	a.coeff = a.x = a.y = a.z = 1;
+	p1.InsMonom(a);
+	a.coeff = a.x = a.y = a.z = 3;
+	p1.InsMonom(a);
+	a.coeff = a.x = a.y = a.z = 4;
+	p1.InsMonom(a);
+	a.coeff = a.x = a.y = a.z = 2;
+	p2.InsMonom(a);
+	a.coeff = 3;
+	a.x = a.y = a.z = 3;
+	p2.InsMonom(a);
+	a.coeff = -4;
+	a.x = a.y = a.z = 4;
+	p2.InsMonom(a);
+	p1 += p2;
+	EXPECT_EQ(3, p1.GetSize());
+}
+
+TEST(TPolinom, polinom_can_become_bigger)
+{
+	TMonom a;
+	TPolinom p1, p2;
+	a.coeff = a.x = a.y = a.z = 1;
+	p1.InsMonom(a);
+	a.coeff = a.x = a.y = a.z = 3;
+	p1.InsMonom(a);
+	a.coeff = a.x = a.y = a.z = 4;
+	p1.InsMonom(a);
+	a.coeff = a.x = a.y = a.z = 2;
+	p2.InsMonom(a);
+	a.coeff = 3;
+	a.x = a.y = a.z = 3;
+	p2.InsMonom(a);
+	a.coeff = 4;
+	a.x = a.y = a.z = 4;
+	p2.InsMonom(a);
+	p1 += p2;
+	EXPECT_EQ(4, p1.GetSize());
+
+}
+
 
 
 
